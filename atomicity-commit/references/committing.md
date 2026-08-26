@@ -2,29 +2,33 @@
 
 A few mechanical notes on actually running `git commit` with the message you've drafted.
 
-## Multi-paragraph bodies: use `-F`, not stacked `-m`
+## Default: stacked `-m`
 
-`-m` joins each flag with a blank line, which works for subject + one body paragraph. Beyond that, escaping backticks, quotes, and newlines on the shell gets fragile fast.
+Each `-m` becomes its own paragraph, separated by a blank line. Within the skill's length budget — subject, a body of at most four lines, and an optional footer — three flags cover everything:
 
-Prefer writing the full message to a temp file and using `-F`:
+```
+git commit \
+  -m "feat(uploader): retry S3 uploads with exponential backoff" \
+  -m "Transient 503s from S3 were failing ~2% of CI runs. The 5-attempt
+cap keeps a genuine outage failing the build within a minute."
+```
+
+Literal newlines inside a double-quoted argument are fine; git preserves them.
+
+## Fallback: `-F` when quoting gets awkward
+
+If the message contains backticks, `$`, or nested double quotes, shell escaping gets fragile. Write it to a temp file with a *quoted* heredoc — `<<'EOF'` stops the shell from interpreting `$`, backticks, or backslashes — and pass it with `-F`:
 
 ```
 cat > /tmp/commit-msg.txt <<'EOF'
-feat(uploader): retry S3 uploads with exponential backoff
+fix(config): read $HOME before falling back to `pwd`
 
-Uploads were failing in ~2% of CI runs due to transient 503s from S3,
-forcing manual reruns of the release pipeline. A bounded retry with
-backoff absorbs these transient failures without masking real outages.
-
-Chose exponential backoff over a fixed delay so retries spread out
-under load — relevant when the whole release fleet uploads in parallel.
+The previous order silently picked up the wrong root under sudo.
 EOF
 
 git commit -F /tmp/commit-msg.txt
 rm /tmp/commit-msg.txt
 ```
-
-The `<<'EOF'` (quoted) heredoc is important — it prevents the shell from interpreting `$`, backticks, or backslashes inside the message.
 
 ## Verifying the commit landed correctly
 
@@ -37,7 +41,7 @@ git --no-pager log -1 --format=fuller
 If the message looks wrong (wrong line wrap, escaping artifacts, missing footer), amend it instead of leaving the bad message in history:
 
 ```
-git commit --amend -F /tmp/fixed-msg.txt
+git commit --amend -m "<subject>" -m "<body>"
 ```
 
 `--amend` is safe as long as the commit has not been pushed to a shared branch.

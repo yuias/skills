@@ -1,6 +1,6 @@
 # Atomicity recipes
 
-A commit is atomic when it captures one focused, logically coherent change. The diff should be reviewable as a unit and revertable as a unit. When the staging area mixes concerns, propose a split.
+A commit is atomic when it captures one focused, logically coherent change. The diff should be reviewable as a unit and revertable as a unit. When the staging area mixes concerns, propose a split — how to present that split to the user is covered in SKILL.md's atomicity section.
 
 ## How to recognise a non-atomic stage
 
@@ -26,7 +26,7 @@ git diff --staged --stat
 git restore --staged path/to/unrelated.ts path/to/also-unrelated.ts
 
 # Commit the focused set
-git commit -F message.txt
+git commit -m "<subject>" -m "<body>"
 
 # Re-stage the rest and commit separately
 git add path/to/unrelated.ts path/to/also-unrelated.ts
@@ -35,6 +35,8 @@ git add path/to/unrelated.ts path/to/also-unrelated.ts
 ### Recipe B — split hunks within a single file
 
 When two unrelated changes live in the same file, use interactive staging.
+
+`git add -p` is interactive and cannot run in this environment — hand these commands to the user and let them drive, or fall back to Recipe A at file granularity.
 
 ```
 # Unstage the file entirely
@@ -82,6 +84,8 @@ git stash pop
 
 Now your real change can be staged and committed without whitespace noise.
 
+Caveat: the stashed hunks were written against the *unformatted* files, so `git stash pop` will often conflict. Resolve by taking your own side and re-running the formatter on the result. When the conflict risk isn't worth it, use Recipe B instead and leave the formatter churn for a later commit.
+
 ## When NOT to split
 
 Don't split if the changes are genuinely interdependent:
@@ -91,14 +95,3 @@ Don't split if the changes are genuinely interdependent:
 - A test and the production code it tests (when added together). Splitting hides whether the test was passing before.
 
 Atomicity is about logical coherence, not file count. One commit touching 30 files for a single rename is atomic. Two commits each touching one file for unrelated reasons is not.
-
-## What to tell the user
-
-When you spot a non-atomic stage, do not just refuse. Show your work:
-
-1. Name the distinct changes you see ("an auth rename and a search bugfix").
-2. Suggest which files/hunks go in which commit.
-3. Provide the exact commands to perform the split.
-4. Ask which commit they'd like to make first.
-
-If the user insists on a single commit anyway, comply, and acknowledge the mixing in the body so future readers aren't surprised.
