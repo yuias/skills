@@ -63,12 +63,10 @@ applies — do not pad to fill all three:
 - Why this approach over a plausible alternative (only when the choice is non-obvious)?
 - A constraint, tradeoff, or non-obvious consequence worth flagging.
 
-**Length budget:** body is typically 0–2 lines; 4 lines is a hard ceiling. Pick
-the single most valuable point and state it. If you find yourself writing more,
-the surplus is almost always re-narrated diff — cut it. When in doubt, omit the
-body rather than pad it. Footers are not part of the body and do not count
-toward this budget — a `BREAKING CHANGE:` description may run as long as the
-break requires.
+**Scope of the body:** pick the single most valuable point and state it. If you
+find yourself writing more, the surplus is almost always re-narrated diff — cut
+it. When in doubt, omit the body rather than pad it. Footers are separate — a
+`BREAKING CHANGE:` description may run as long as the break requires.
 
 Wrap body lines at 72 characters. Separate subject and body with a blank line.
 

@@ -4,7 +4,7 @@ A few mechanical notes on actually running `git commit` with the message you've 
 
 ## Default: stacked `-m`
 
-Each `-m` becomes its own paragraph, separated by a blank line. Within the skill's length budget — subject, a body of at most four lines, and an optional footer — three flags cover everything:
+Each `-m` becomes its own paragraph, separated by a blank line. For the message shape the skill produces — subject, an optional short body, and an optional footer — three flags cover everything:
 
 ```
 git commit \
