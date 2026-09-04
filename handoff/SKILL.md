@@ -31,7 +31,7 @@ Rules:
 - Tag every state claim `[verified: <command>]` or `[unverified]`.
 - Every decision carries its reason. A decision without a reason gets overturned next session.
 - No diffs, no code dumps. Point at `path/to/file.rs:symbol` and the commit hash.
-- Keep the whole note under 100 lines.
+- The next session should be able to absorb the whole note before opening any file.
 
 Format:
 
@@ -78,5 +78,5 @@ Then report only the note path and that the next session should run `/handoff re
 3. Run the verification commands and check them against "Current state". **Do not skip this**
    — the working tree may have moved since the note was written.
 4. Report any drift first.
-5. State goal / current state / first action in 5 lines or fewer, then wait for the user's
-   confirmation. **Do not edit files before that confirmation.**
+5. State goal / current state / first action — enough to orient, without reading the note
+   back. Then wait for the user's confirmation. **Do not edit files before that confirmation.**
