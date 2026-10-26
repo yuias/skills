@@ -7,31 +7,26 @@ disable-model-invocation: true
 
 Note path: `.claude/handoff.md`
 
-Read the first word of `$ARGUMENTS` and run the matching mode below.
-If it is neither `save` nor `restore`, or is empty, do **nothing** and just print the usage
-(`/handoff save`, `/handoff restore`).
+Run the mode named by the first word of `$ARGUMENTS`. For anything else, or no argument,
+print the usage (`/handoff save`, `/handoff restore`) and stop.
 
 Write the note in English, and conduct both modes in English, regardless of any language
 default set elsewhere in the project config.
 
----
-
 ## save
 
-Rewrite `.claude/handoff.md` in full. Never append to it as a log.
+Overwrite the note in full; it is a snapshot, not a log.
 
-Before writing:
-- Get `git rev-parse --short HEAD` and `git status --short`.
-- Re-read any file you are about to make claims about if you have not touched it recently;
-  your in-context copy may be stale.
+Before writing, get `git rev-parse --short HEAD` and `git status --short`, and re-read any
+file you will make claims about unless you touched it recently.
 
 Rules:
-- Describe the **current state of the world**, not the conversation. "Decoder thread
-  implemented, untested" — not "I implemented the decoder, then we discussed...".
+- Describe the current state of the work, not the conversation: "Decoder thread
+  implemented, untested", not "I implemented the decoder, then we discussed...".
 - Tag every state claim `[verified: <command>]` or `[unverified]`.
-- Every decision carries its reason. A decision without a reason gets overturned next session.
-- No diffs, no code dumps. Point at `path/to/file.rs:symbol` and the commit hash.
-- The next session should be able to absorb the whole note before opening any file.
+- Give every decision its reason, so the next session does not overturn it.
+- No diffs or code dumps. Point at `path/to/file.rs:symbol` and the commit hash.
+- Keep the note short enough to read in full before opening any file.
 
 Format:
 
@@ -69,14 +64,12 @@ Updated: <date> / HEAD: <short-sha> / working tree: clean|dirty
 
 Then report only the note path and that the next session should run `/handoff restore`.
 
----
-
 ## restore
 
-1. Read `.claude/handoff.md`. If missing, say so and stop.
-2. Read the files listed under "Key files". The note records intent; the files are the truth.
-3. Run the verification commands and check them against "Current state". **Do not skip this**
-   — the working tree may have moved since the note was written.
-4. Report any drift first.
-5. State goal / current state / first action — enough to orient, without reading the note
-   back. Then wait for the user's confirmation. **Do not edit files before that confirmation.**
+1. Read the note. If it is missing, say so and stop.
+2. Read the files under "Key files"; where they disagree with the note, the files are right.
+3. Run the commands under "Verification" and compare the results with "Current state". The
+   working tree may have changed since the note was written.
+4. Report any drift first, then goal, current state, and first action, in your own words
+   rather than reading the note back.
+5. Wait for the user's confirmation before editing any file.
