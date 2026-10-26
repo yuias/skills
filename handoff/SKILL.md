@@ -10,8 +10,8 @@ Note path: `.claude/handoff.md`
 Run the mode named by the first word of `$ARGUMENTS`. For anything else, or no argument,
 print the usage (`/handoff save`, `/handoff restore`) and stop.
 
-Write the note in English, and conduct both modes in English, regardless of any language
-default set elsewhere in the project config.
+Write the note in English, regardless of any language default set elsewhere in the project
+config.
 
 ## save
 
